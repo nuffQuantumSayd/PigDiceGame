@@ -1,6 +1,7 @@
 class Player{
     name:string;
     score:number;
+    gameTotal:number;
 }
 
 class Game{
@@ -31,13 +32,18 @@ function generateRandomValue(minValue:number, maxValue:number):number{
 
 
 function changePlayers():void{
-    let currentPlayerName = document.getElementById("current").innerText;
-    let player1Name = (<HTMLInputElement>document.getElementById("player1")).value;
-    let player2Name = (<HTMLInputElement>document.getElementById("player2")).value;
-
+    //let currentPlayerName = document.getElementById("current").innerText;
+    // let player1Name = (<HTMLInputElement>document.getElementById("player1")).value;
+    // let player2Name = (<HTMLInputElement>document.getElementById("player2")).value;
     //swap from player to player by comparing current name to player names
-    
+    if (game.playerTurn == player1){
+        game.playerTurn = player2;
+    }
+    else{
+        game.playerTurn = player1;
+    }    
     //set currentPlayerName to the next player
+    $("current").innerText = game.playerTurn.name;
 }
 
 window.onload = function(){
@@ -61,10 +67,12 @@ function createNewGame(){
         //create player one and set score
         player1.name = $("player1").value;
         player1.score = 0;
+        player1.gameTotal = 99;
 
         //create player two and set score
         player2.name = $("player2").value;
         player2.score = 0;
+        player2.gameTotal = 99;
 
         //show the players
         console.log("players created");
@@ -74,18 +82,27 @@ function createNewGame(){
         console.log(game);
 
         //set the current player to player 1
-        game.playerTurn = player1;
+        game.playerTurn = player2;
 
         document.getElementById("turn").classList.add("open");
-        (<HTMLInputElement>document.getElementById("total")).value = "0";
         //lock in player names and then change players
         document.getElementById("player1").setAttribute("disabled", "disabled");
         document.getElementById("player2").setAttribute("disabled", "disabled");
         changePlayers();
+        $("total").value = game.playerTurn.gameTotal.toString();
     }
     //if both players don't have a name display error
 
     //if both players do have a name start the game!
+}
+
+function declareTheWinner(){
+    if(game.playerTurn.gameTotal >= 100){
+        game.gameOver = true;
+        alert("The winner is " + game.playerTurn.name + " with a score of " + game.playerTurn.gameTotal)
+        resetPlayers()
+    }
+    
 }
 
 function verifyPlayerName(id:string):boolean{
@@ -104,30 +121,41 @@ function createNewPlayer(id:string){
 }
 
 function rollDie():void{
-    
-    let currTotal = getCurrentTotal();
-    
     //roll the die and get a random value 1 - 6 (use generateRandomValue function)
     let roll = generateRandomValue(1, 6);
-    alert(roll);
+
     //if the roll is 1
     //  change players
     //  set current total to 0
     if(roll == 1){
+        game.playerTurn.score = 0;
+        displayPlayerScore();
         changePlayers();
-        currTotal = 0;
     }
+    
     
     //if the roll is greater than 1
     //  add roll value to current total
     else{
-        currTotal += roll;
+        game.playerTurn.score += roll;
+        //display the score
+        displayPlayerScore(); 
     }
 
     //set the die roll to value player rolled
     //display current total on form
     (<HTMLInputElement>document.getElementById("die")).value = roll.toString();
-    (<HTMLInputElement>document.getElementById("total")).value = currTotal.toString();
+    (<HTMLInputElement>document.getElementById("total")).value = game.playerTurn.gameTotal.toString();
+}
+
+
+function displayPlayerScore():void{
+    if(game.playerTurn == player1){
+        $("score1").value = player1.score.toString();
+    }
+    else{
+        $("score2").value = player2.score.toString();
+    }
 }
 
 function getCurrentTotal():number{
@@ -136,18 +164,34 @@ function getCurrentTotal():number{
 }
 
 function holdDie():void{
-    //get the current turn total
-    let currentTotal = getCurrentTotal();
+    //reset the value of the die to no value
+    $("die").value = "";
+    
+    //get the value of the player score and add it to the current players total
+    game.playerTurn.gameTotal += game.playerTurn.score;
 
-    //determine who the current player is
-    //add the current turn total to the player's total score
-
-    //reset the turn total to 0
-    (<HTMLInputElement>$("total")).value = "0";
-    //change players
+    if(game.playerTurn == player1){
+        player1.score = 0;
+    }
+    else{
+        player2.score = 0;
+    }
+    displayPlayerScore();
+    
+    declareTheWinner();
     changePlayers();
+    //display the total of the next player
+    $("total").value = game.playerTurn.gameTotal.toString();
+    
 }
 
 function $(id:string):HTMLInputElement{
     return <HTMLInputElement>document.getElementById(id);
+}
+function resetPlayers() {
+    player1.score = 0;
+    player1.gameTotal = 0;
+
+    player2.score = 0;
+    player2.gameTotal = 0;
 }

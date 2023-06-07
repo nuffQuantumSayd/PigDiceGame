@@ -20,9 +20,13 @@ function generateRandomValue(minValue, maxValue) {
     return randomDiceRoll;
 }
 function changePlayers() {
-    var currentPlayerName = document.getElementById("current").innerText;
-    var player1Name = document.getElementById("player1").value;
-    var player2Name = document.getElementById("player2").value;
+    if (game.playerTurn == player1) {
+        game.playerTurn = player2;
+    }
+    else {
+        game.playerTurn = player1;
+    }
+    $("current").innerText = game.playerTurn.name;
 }
 window.onload = function () {
     var newGameBtn = document.getElementById("new_game");
@@ -37,19 +41,28 @@ function createNewGame() {
     else {
         player1.name = $("player1").value;
         player1.score = 0;
+        player1.gameTotal = 99;
         player2.name = $("player2").value;
         player2.score = 0;
+        player2.gameTotal = 99;
         console.log("players created");
         console.log(player1);
         console.log(player2);
         console.log("game created");
         console.log(game);
-        game.playerTurn = player1;
+        game.playerTurn = player2;
         document.getElementById("turn").classList.add("open");
-        document.getElementById("total").value = "0";
         document.getElementById("player1").setAttribute("disabled", "disabled");
         document.getElementById("player2").setAttribute("disabled", "disabled");
         changePlayers();
+        $("total").value = game.playerTurn.gameTotal.toString();
+    }
+}
+function declareTheWinner() {
+    if (game.playerTurn.gameTotal >= 100) {
+        game.gameOver = true;
+        alert("The winner is " + game.playerTurn.name + " with a score of " + game.playerTurn.gameTotal);
+        resetPlayers();
     }
 }
 function verifyPlayerName(id) {
@@ -65,28 +78,51 @@ function createNewPlayer(id) {
     return player;
 }
 function rollDie() {
-    var currTotal = getCurrentTotal();
     var roll = generateRandomValue(1, 6);
-    alert(roll);
     if (roll == 1) {
+        game.playerTurn.score = 0;
+        displayPlayerScore();
         changePlayers();
-        currTotal = 0;
     }
     else {
-        currTotal += roll;
+        game.playerTurn.score += roll;
+        displayPlayerScore();
     }
     document.getElementById("die").value = roll.toString();
-    document.getElementById("total").value = currTotal.toString();
+    document.getElementById("total").value = game.playerTurn.gameTotal.toString();
+}
+function displayPlayerScore() {
+    if (game.playerTurn == player1) {
+        $("score1").value = player1.score.toString();
+    }
+    else {
+        $("score2").value = player2.score.toString();
+    }
 }
 function getCurrentTotal() {
     var currentTotal = parseInt($("total").value);
     return currentTotal;
 }
 function holdDie() {
-    var currentTotal = getCurrentTotal();
-    $("total").value = "0";
+    $("die").value = "";
+    game.playerTurn.gameTotal += game.playerTurn.score;
+    if (game.playerTurn == player1) {
+        player1.score = 0;
+    }
+    else {
+        player2.score = 0;
+    }
+    displayPlayerScore();
+    declareTheWinner();
     changePlayers();
+    $("total").value = game.playerTurn.gameTotal.toString();
 }
 function $(id) {
     return document.getElementById(id);
+}
+function resetPlayers() {
+    player1.score = 0;
+    player1.gameTotal = 0;
+    player2.score = 0;
+    player2.gameTotal = 0;
 }
