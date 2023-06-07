@@ -7,7 +7,19 @@ class Game{
     playerTurn:Player;
     currentTurnTotal:number;
     gameOver:boolean;
+    
+    constructor(playerTurn:Player, currentTurnTotal:number, gameOver:boolean){
+        this.playerTurn = playerTurn;
+        this.currentTurnTotal = currentTurnTotal;
+        this.gameOver = gameOver;
+    }
 }
+
+//initialize players and game object
+let player1:Player = new Player();
+let player2:Player = new Player();
+let game:Game = new Game(player1, 0, false);
+
 
 function generateRandomValue(minValue:number, maxValue:number):number{
     var random = Math.random();
@@ -46,14 +58,20 @@ function createNewGame(){
         alert("Please enter a name for both players");
     }
     else{
-        let player1:Player = createNewPlayer("player1");
-        let player2:Player = createNewPlayer("player2");
+        //create player one and set score
+        player1.name = $("player1").value;
+        player1.score = 0;
+
+        //create player two and set score
+        player2.name = $("player2").value;
+        player2.score = 0;
+
+        //show the players
         console.log("players created");
         console.log(player1);
         console.log(player2);
-
-
-        let game:Game = new Game();
+        console.log("game created");
+        console.log(game);
 
         //set the current player to player 1
         game.playerTurn = player1;

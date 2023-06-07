@@ -4,10 +4,16 @@ var Player = (function () {
     return Player;
 }());
 var Game = (function () {
-    function Game() {
+    function Game(playerTurn, currentTurnTotal, gameOver) {
+        this.playerTurn = playerTurn;
+        this.currentTurnTotal = currentTurnTotal;
+        this.gameOver = gameOver;
     }
     return Game;
 }());
+var player1 = new Player();
+var player2 = new Player();
+var game = new Game(player1, 0, false);
 function generateRandomValue(minValue, maxValue) {
     var random = Math.random();
     var randomDiceRoll = Math.floor(random * maxValue) + minValue;
@@ -29,12 +35,15 @@ function createNewGame() {
         alert("Please enter a name for both players");
     }
     else {
-        var player1 = createNewPlayer("player1");
-        var player2 = createNewPlayer("player2");
+        player1.name = $("player1").value;
+        player1.score = 0;
+        player2.name = $("player2").value;
+        player2.score = 0;
         console.log("players created");
         console.log(player1);
         console.log(player2);
-        var game = new Game();
+        console.log("game created");
+        console.log(game);
         game.playerTurn = player1;
         document.getElementById("turn").classList.add("open");
         document.getElementById("total").value = "0";
