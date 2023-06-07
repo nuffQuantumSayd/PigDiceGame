@@ -41,10 +41,10 @@ function createNewGame() {
     else {
         player1.name = $("player1").value;
         player1.score = 0;
-        player1.gameTotal = 99;
+        player1.gameTotal = 0;
         player2.name = $("player2").value;
         player2.score = 0;
-        player2.gameTotal = 99;
+        player2.gameTotal = 0;
         console.log("players created");
         console.log(player1);
         console.log(player2);
@@ -59,11 +59,8 @@ function createNewGame() {
     }
 }
 function declareTheWinner() {
-    if (game.playerTurn.gameTotal >= 100) {
-        game.gameOver = true;
-        alert("The winner is " + game.playerTurn.name + " with a score of " + game.playerTurn.gameTotal);
-        resetPlayers();
-    }
+    alert("The winner is " + game.playerTurn.name + " with a score of " + game.playerTurn.gameTotal);
+    resetPlayersAndGame();
 }
 function verifyPlayerName(id) {
     if ($(id).value == null || $(id).value == "") {
@@ -113,16 +110,25 @@ function holdDie() {
         player2.score = 0;
     }
     displayPlayerScore();
-    declareTheWinner();
+    if (isGameOver()) {
+        declareTheWinner();
+    }
     changePlayers();
     $("total").value = game.playerTurn.gameTotal.toString();
 }
 function $(id) {
     return document.getElementById(id);
 }
-function resetPlayers() {
+function resetPlayersAndGame() {
     player1.score = 0;
     player1.gameTotal = 0;
     player2.score = 0;
     player2.gameTotal = 0;
+    game.gameOver = false;
+}
+function isGameOver() {
+    if (game.playerTurn.gameTotal > 99) {
+        game.gameOver = true;
+    }
+    return game.gameOver;
 }
