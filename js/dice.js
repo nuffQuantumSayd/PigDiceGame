@@ -14,6 +14,7 @@ var Game = (function () {
 var player1 = new Player();
 var player2 = new Player();
 var game = new Game(player1, 0, false);
+var rpgDiceRollSound = new Audio("audio/rpg-dice.mp3");
 function generateRandomValue(minValue, maxValue) {
     var random = Math.random();
     var randomDiceRoll = Math.floor(random * maxValue) + minValue;
@@ -68,13 +69,8 @@ function verifyPlayerName(id) {
     }
     return true;
 }
-function createNewPlayer(id) {
-    var player = new Player();
-    player.name = $(id).value;
-    player.score = 0;
-    return player;
-}
 function rollDie() {
+    rpgDiceRollSound.play();
     var roll = generateRandomValue(1, 6);
     if (roll == 1) {
         game.playerTurn.score = 0;
@@ -95,10 +91,6 @@ function displayPlayerScore() {
     else {
         $("score2").value = player2.score.toString();
     }
-}
-function getCurrentTotal() {
-    var currentTotal = parseInt($("total").value);
-    return currentTotal;
 }
 function holdDie() {
     $("die").value = "";
